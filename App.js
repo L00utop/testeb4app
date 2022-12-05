@@ -18,8 +18,8 @@ const App = () => {
       //create a new Parse Object instance
       const newanuncio = new Parse.Object('Anuncio');
       //define the attributes you want for your Object
-      newanuncio.set('Nome', dados);
-      newanuncio.set('Valor', dados);
+      newanuncio.set('Nome', dados.Nome);
+      newanuncio.set('Valor', dados.valor);
       //save it on Back4App Data Store
       await newanuncio.save();
     } catch (error) {
@@ -28,17 +28,12 @@ const App = () => {
   }
 
   async function fetchAnuncio() {
-    //create your Parse Query using the anuncio Class you've created
     let query = new Parse.Query('Anuncio');
-    //run the query to retrieve all objects on anuncio class, optionally you can add your filters
     let queryResult = await query.find();
-    //the resul is an arry of objects. Pick the first result 
-    const currentAnuncio = queryResult[0];
-    setAnuncio(anuncio)
-    //access the Parse Object attributes
-    console.log('Nome', currentAnuncio.get('Nome'));
-    console.log('valor', currentAnuncio.get('valor'));
-    setAnuncio(currentAnuncio);
+    console.log(queryResult);
+    const listaDeAnuncios = queryResult;    
+    listaDeAnuncios.map(anuncio=>{console.log(anuncio.id +" - "+ anuncio.get("Nome"))});
+
   }
 
   useEffect(() => {
@@ -57,8 +52,14 @@ let dados = {
   return (
     <SafeAreaView>
       <View>
-        <TextInput placeholder='Nome' onChange={}></TextInput>
-        <TextInput placeholder='valor'></TextInput>
+        <TextInput placeholder='Nome' onChange={(nome)=>{
+          dados.Nome = nome.nativeEvent.text;
+          console.log(dados)
+        }}></TextInput>
+        <TextInput placeholder='Valor' onChange={(value)=>{
+          dados.valor = value.nativeEvent.text;
+          console.log(dados)
+        }}></TextInput>
         
         <Button title='Add anuncio' onPress={addAnuncio} />
         <Button title='Fetch anuncio' onPress={fetchAnuncio} />
